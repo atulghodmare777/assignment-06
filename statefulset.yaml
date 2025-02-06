@@ -1,0 +1,31 @@
+apiServer: apps/v1
+kind: statefulset
+metadata:
+  name: my-statefulset
+spec:
+  matchLabel:
+    app: my-app
+  replicas: 3
+  serviceName: my-service
+  template:
+    label:
+      app: my-app
+    container:
+    - name: my-container
+      image: myimage:latest
+      ports:
+        containerPort: 80
+      resource:
+        cpu: "250m"
+        memory: "350Mi"
+      limit:
+        cpu: "500m"
+        memory: "500Mi"
+      volumeMount:
+      - name: my-volume
+        mountPath: /data
+volumeClaimTemplate:
+- name: my-volume
+  resource:
+    storage: 1Gi
+      
