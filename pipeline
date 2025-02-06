@@ -1,0 +1,40 @@
+pipeline{
+  agent any
+    environemnt{
+      AWS_PROFILE = "dev"
+      KUBECONFIG = "$HOME/.kube/dev-eks.config"
+      REGYSTRY = "registry_url"
+      TAG = "latest"
+    }
+    stages{
+      stage('docker_login'){
+        steps{
+          script{
+            sh "docker login $REGYSTRY -u $USER -p $PASSWORD | echo 'docker login successful'"
+          }
+        }
+      }
+      stage('docker_build'){
+        steps{
+          script{
+            sh "docker built -t my-nginx ."
+          }
+        }
+      }
+      stage('image_scan'){
+        steps{
+          script{
+            sh "docker scan my-nginx"
+          }
+        }
+      }
+      stage('deployment'){
+        steps{
+          script{
+            sh "helm upgrade -f values-dev.yaml"
+          }
+        }
+      }
+    }
+
+}
